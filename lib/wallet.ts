@@ -66,3 +66,18 @@ export function isNormalUserWallet(address: string) {
   const normalUserAddress = process.env.NEXT_PUBLIC_NORMAL_USER_WALLET?.trim().toLowerCase();
   return Boolean(normalUserAddress && address === normalUserAddress);
 }
+
+const WALLET_SESSION_KEY = "predexa_connected_wallet";
+
+export function saveConnectedWallet(address: string) {
+  if (typeof window !== "undefined") sessionStorage.setItem(WALLET_SESSION_KEY, address);
+}
+
+export function getConnectedWallet() {
+  if (typeof window === "undefined") return "";
+  return sessionStorage.getItem(WALLET_SESSION_KEY)?.toLowerCase() ?? "";
+}
+
+export function clearConnectedWallet() {
+  if (typeof window !== "undefined") sessionStorage.removeItem(WALLET_SESSION_KEY);
+}

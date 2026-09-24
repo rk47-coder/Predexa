@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { WalletModal } from "../components/WalletModal";
 import { WalletDropdown } from "../components/WalletDropdown";
 import headerStyles from "../components/HeaderActions.module.css";
-import { connectMetaMask, getWalletBalance, isAdminWallet, isNormalUserWallet, shortAddress } from "../lib/wallet";
+import { clearConnectedWallet, connectMetaMask, getWalletBalance, isAdminWallet, isNormalUserWallet, saveConnectedWallet, shortAddress } from "../lib/wallet";
 
 type Market = {
   category: string;
@@ -143,6 +143,7 @@ export default function Home() {
     try {
       const account = await connectMetaMask();
       setWalletAddress(account);
+      saveConnectedWallet(account);
       setIsWalletModalOpen(false);
     } catch (error) {
       setWalletError(error instanceof Error ? error.message : "Could not connect MetaMask. Please try again.");
@@ -155,9 +156,9 @@ export default function Home() {
     <main>
       <nav className="navbar">
         <a className="brand" href="#top" aria-label="Predexa home"><span className="brand-mark"><i/><i/><i/></span><span>predexa</span></a>
-        <div className="nav-links">{["Markets", "News", "Portfolio"].map((item) => <button key={item} className={activeNav === item ? "active" : ""} onClick={() => setActiveNav(item)}>{item}</button>)}{isAdmin && <button className={headerStyles.createMarket}><Icon name="grid" size={15}/> Create market</button>}</div>
+        <div className="nav-links">{["Markets", "News", "Portfolio"].map((item) => <button key={item} className={activeNav === item ? "active" : ""} onClick={() => setActiveNav(item)}>{item}</button>)}{isAdmin && <a className={headerStyles.createMarket} href="/admin/create-market"><Icon name="grid" size={15}/> Create market</a>}</div>
         <label className="search"><Icon name="search" size={18}/><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search markets"/><kbd>⌘ K</kbd></label>
-        <div className="nav-actions"><button className="icon-button" aria-label="Toggle theme">☼</button><div className={headerStyles.walletControl}><button className={`wallet-button ${walletAddress ? "wallet-connected" : ""}`} aria-expanded={isWalletMenuOpen} onClick={() => walletAddress ? setIsWalletMenuOpen((isOpen) => !isOpen) : setIsWalletModalOpen(true)}><Icon name="wallet" size={18}/><span>{walletAddress ? shortAddress(walletAddress) : "Connect wallet"}</span><Icon name="chevron" size={15}/></button>{walletAddress && isWalletMenuOpen && <WalletDropdown address={walletAddress} balance={walletBalance} isAdmin={isAdmin} isNormalUser={isNormalUser} onDisconnect={() => { setWalletAddress(""); setIsWalletMenuOpen(false); }}/>}</div></div>
+        <div className="nav-actions"><button className="icon-button" aria-label="Toggle theme">☼</button><div className={headerStyles.walletControl}><button className={`wallet-button ${walletAddress ? "wallet-connected" : ""}`} aria-expanded={isWalletMenuOpen} onClick={() => walletAddress ? setIsWalletMenuOpen((isOpen) => !isOpen) : setIsWalletModalOpen(true)}><Icon name="wallet" size={18}/><span>{walletAddress ? shortAddress(walletAddress) : "Connect wallet"}</span><Icon name="chevron" size={15}/></button>{walletAddress && isWalletMenuOpen && <WalletDropdown address={walletAddress} balance={walletBalance} isAdmin={isAdmin} isNormalUser={isNormalUser} onDisconnect={() => { clearConnectedWallet(); setWalletAddress(""); setIsWalletMenuOpen(false); }}/>}</div></div>
       </nav>
       {isWalletModalOpen && <WalletModal isConnecting={isConnecting} error={walletError} onClose={() => { setIsWalletModalOpen(false); setWalletError(""); }} onConnectMetaMask={handleMetaMaskConnect}/>} 
 
