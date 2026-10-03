@@ -5,8 +5,13 @@
 /.next
 /out
 
+# Hardhat generated output
+/artifacts
+/cache
+
 # local environment files
 .env*.local
-
+.env.deploy
+.env
 # system files
 .DS_Store
