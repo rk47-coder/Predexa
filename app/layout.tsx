@@ -1,0 +1,16 @@
+import type { Metadata } from "next";
+import "./tailwind.css";
+import "./globals.css";
+
+export const metadata: Metadata = {
+  title: "Predexa — Trade the future",
+  description: "A modern prediction market interface.",
+};
+
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  return (
+    <html lang="en">
+      <body>{children}</body>
+    </html>
+  );
+}
